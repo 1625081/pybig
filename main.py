@@ -75,9 +75,46 @@ def datadel():
 	varlist,btnlist,labelist=datas()
 	datashow()
 
+def newdataconfirm():
+	global my
+	global showlist
+	global varlist,btnlist,labelist
+	raw=showbox.get(4.0,END)
+	rawdata=raw.split('\n')
+	rawdata.pop()
+	for newdata in rawdata:
+		tmpdata=newdata.split('\t')
+		if my.add(tmpdata[0],tmpdata[1],tmpdata[2],tmpdata[3])!="Successed.":
+			messagebox.showerror("Error",my.add(tmpdata[0],tmpdata[1],tmpdata[2],tmpdata[3]))
+			showbox.delete(4.0,END)
+			break
+	else:
+		showbox.delete(1.0,3.0)
+		createbutton.config(text="新增",command=datanew)
+		showbutton.config(state=NORMAL)
+		deletebutton.config(state=NORMAL)
+		searchbtn.config(state=NORMAL)
+		editbutton.config(state=NORMAL)
+		messagebox.showinfo("Successed","Your new data is updated!")
+		showlist=my.data[:]
+		varlist,btnlist,labelist=datas()
+		datashow()
+
+
 def datanew():
 	showbox.delete(1.0,END)
-
+	showbox.insert(END,'Please enter new data in the following format:\n')
+	showbox.insert(END,"Enter \'TAB\' to devide each column\n")
+	#confirmbutton=Button(root,text="确认",command=newdataconfirm)
+	showbox.insert(END,'uid:\tname:\tsex:\theight(cm):\t')
+	#showbox.window_create(END,window=confirmbutton)
+	showbox.insert(END,'\n')
+	createbutton.config(text="确认",command=newdataconfirm)
+	showbutton.config(state=DISABLED)
+	deletebutton.config(state=DISABLED)
+	#createbutton.config(state=DISABLED)
+	searchbtn.config(state=DISABLED)
+	editbutton.config(state=DISABLED)
 
 def datasearch():
 	key=searchbox.get(1.0,END)
