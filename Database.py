@@ -40,25 +40,30 @@ class Database:
 		for Stu in self.data: #keyword must be a string as no "int" before "input()"
 			if str(Stu.uid)==keyword or str(Stu.name)==keyword or str(Stu.sex)==keyword or str(Stu.height)==keyword:
 					result.append(Stu)
-		if len(result)==1:return result[0]
-		else: return result #maybe返回空列表
+		#if len(result)==1:return result[0]
+		return result #maybe返回空列表
 
 
 	def condition_search(self,*conditions):
 		category=conditions[0]
 		upper=conditions[1]
 		lower=conditions[2]
-		keyword=conditions[3]
+		#keyword=conditions[3]
 		result=[]
-		if category=="sex" or category=="name":return self.search(keyword)
-		elif category=="uid":
+		#if category=="sex" or category=="name":return self.search(keyword)
+		if category=="uid":
 			for Stu in self.data:
-				if Stu.uid <= int(upper) and Stu.uid >= int(lower):
-					result.append(Stu)
-		else: 
+				try:
+					if Stu.uid <= int(upper) and Stu.uid >= int(lower):
+						result.append(Stu)
+				except:return "Search Error!Please Check your inputs!"
+		elif category=="height":
 			for Stu in self.data:
-				if Stu.height <= int(upper) and Stu.height >= int(lower):
-					result.append(Stu)
+				try:
+					if Stu.height <= int(upper) and Stu.height >= int(lower):
+						result.append(Stu)
+				except:return "Search Error!Please Check your inputs!"
+		else: return "Search Error!Please Check your inputs!"
 		return result
 
 	def accurate_search(self,mode,keyword):
@@ -77,9 +82,9 @@ class Database:
 				continue
 			else:
 				datatmp.append(Stu)
-		data=datatmp[:]
-		for Stu in data:
-			Stu.show()
+		self.data=datatmp[:]
+		#for Stu in self.data:
+		#	Stu.show()
 
 	def open(self):	
 		pass

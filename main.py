@@ -11,9 +11,9 @@ my.add(5,"mary","girl",160)
 
 
 from tkinter import *
-
+from tkinter import messagebox
 def callback():
-	print(varlist)
+	#print(varlist)
 	for var in varlist:
 		if var.get()==1:
 			btnlist[varlist.index(var)].config(bg="Yellow")
@@ -21,11 +21,13 @@ def callback():
 			#exec("button"+str(Stu.uid)+".config(bg='Yellow')")
 			#exec("label"+str(Stu.uid)+".config(bg='Yellow')")
 		else:
-			print(var.get())
+			#print(var.get())
 			btnlist[varlist.index(var)].config(bg="White")
 			labelist[varlist.index(var)].config(bg="White")
 
+
 def datas():
+	showbox.delete(2.0,END)
 	varlist=[]
 	btnlist=[]
 	labelist=[]
@@ -42,60 +44,65 @@ def datas():
 	return varlist,btnlist,labelist
 
 def datashow():
-	showbox.delete(2.0,END)
+	#showbox.delete(2.0,END)
 	#varlist,btnlist,labelist=datas()
 	for var in varlist:
 		showbox.window_create(END,window=btnlist[varlist.index(var)])
 		showbox.window_create(END,window=labelist[varlist.index(var)])
 		showbox.insert(END,'\n')
 
-
-
-
-'''def datashow():
-	#this func show all data
-	varlist=[]
-	btnlist=[]
-	labelist=[]
-	showbox.delete(2.0,END)
-	for Stu in showlist:
-		tmpvar="var"+str(Stu.uid)	
-		locals()[tmpvar]=IntVar()
-		locals()[tmpvar].set(0)
-		content=str(Stu.name)+"\t"+str(Stu.sex)+"\t"+str(Stu.height)+"\t"
-		exec("button"+str(Stu.uid)+"=Checkbutton(root,text=str(Stu.uid),onvalue=1,variable="+tmpvar+",offvalue=0,bg='White',command=callback,width=2,height=2)")
-		locals()["label"+str(Stu.uid)]=Label(root,text=content,padx=15,pady=10,bg="White",relief=FLAT)
-		exec("showbox.window_create(END,window="+"button"+str(Stu.uid)+")")
-		exec("showbox.window_create(END,window="+"label"+str(Stu.uid)+")")
-		varlist.append(locals()[tmpvar])
-		btnlist.append(locals()["button"+str(Stu.uid)])
-		labelist.append(locals()["label"+str(Stu.uid)])
-		showbox.insert(END,'\n')
-	return varlist,btnlist,labelist'''
+def dataall():
+	global showlist
+	showlist=data[:]
+	global varlist,btnlist,labelist
+	varlist,btnlist,labelist=datas()
+	datashow()
 
 def dataedit():
 	pass
 
 def datadel():
-	global showlist
-	for Stu in showlist:
-		if eval("var"+str(Stu.uid)+".get()==1"):
-			showlist.remove(Stu)
-
-
+	global varlist,btnlist,labelist
+	global my
+	rlist=varlist[:]
+	rlist.reverse()
+	for var in rlist:
+		if var.get()==1:
+			showbox.delete(labelist[varlist.index(var)])
+			my.data.pop(varlist.index(var))
+			showlist.pop(varlist.index(var))
+			showbox.delete(btnlist[varlist.index(var)])
+	varlist,btnlist,labelist=datas()
+	datashow()
 
 def datanew():
-	pass
+	showbox.delete(1.0,END)
+
 
 def datasearch():
 	key=searchbox.get(1.0,END)
 	k=key.split('\n')
-	showlist=my.search(key)[:]
-	datashow()
+	global showlist
+	global varlist,btnlist,labelist	
+	if len(k[0].split(":"))==1:
+		showlist=my.search(k[0])[:]
+		varlist,btnlist,labelist=datas()
+		datashow()
+	elif len(k[0].split(":"))==3:
+		keys=k[0].split(":")
+		try:
+			showlist=my.condition_search(keys[0],keys[1],keys[2])[:]
+			varlist,btnlist,labelist=datas()
+			datashow()
+		except:
+			messagebox.showerror("Error",my.condition_search(keys[0],keys[1],keys[2]))
+			return
+
+
 
 root=Tk()
 root.title="My Database"
-showlist=data[:]
+showlist=my.data[:]
 root.geometry('400x400')
 showbox=Text(root,width=47)
 
@@ -103,7 +110,7 @@ showbox=Text(root,width=47)
 
 varlist,btnlist,labelist=datas()
 
-showbutton=Button(root,text="展示",command=datashow)
+showbutton=Button(root,text="全部",command=dataall)
 editbutton=Button(root,text="修改",command=dataedit)
 deletebutton=Button(root,text="删除",command=datadel)
 createbutton=Button(root,text="新增",command=datanew)
