@@ -13,12 +13,12 @@ class Student:
 		print(self.height)
 	
 	def edit(self,name,sex,height):
-		uid=self.uid
+		uid=int(self.uid)
 		temp=Student(uid,name,sex,height)
 		if temp.validate()!="Data is alright.":
 			return temp.validate()
 		else:
-			self=temp
+			self=Student(int(uid),name,sex,int(height))
 			return self
 	
 	def validate(self):

@@ -21,18 +21,15 @@ class Database:
 		for Stu in self.data:
 			Stu.show()
 
-	def edit(self,name,sex,height,*uids):#here we confirm that uid can't be changed
+	def edit(self,uid,name,sex,height):#here we confirm that uid can't be changed
 		try:
-			result=[]
-			for uid in uids:
-				Stu=self.search(str(uid))
-				newStu=self.search(str(uid)).edit(name,sex,height)
-				if type(newStu)==str:
-					return newStu
-				else:
-					self.data[self.data.index(Stu)]=newStu
-					result.append(newStu)
-			return result #return a list of result
+			Stu=self.search(str(uid))[0]
+			newStu=self.search(str(uid))[0].edit(name,sex,height)
+			if type(newStu)==str:
+				return newStu
+			else:
+				self.data[self.data.index(Stu)]=newStu
+				return newStu #return a list of result
 		except:return "Unknown Error!"
 
 	def search(self,keyword):

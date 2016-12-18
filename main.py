@@ -13,18 +13,13 @@ my.add(5,"mary","girl",160)
 from tkinter import *
 from tkinter import messagebox
 def callback():
-	#print(varlist)
 	for var in varlist:
 		if var.get()==1:
 			btnlist[varlist.index(var)].config(bg="Yellow")
 			labelist[varlist.index(var)].config(bg="Yellow")
-			#exec("button"+str(Stu.uid)+".config(bg='Yellow')")
-			#exec("label"+str(Stu.uid)+".config(bg='Yellow')")
 		else:
-			#print(var.get())
 			btnlist[varlist.index(var)].config(bg="White")
 			labelist[varlist.index(var)].config(bg="White")
-
 
 def datas():
 	showbox.delete(2.0,END)
@@ -53,27 +48,72 @@ def datashow():
 
 def dataall():
 	global showlist
-	showlist=data[:]
+	showlist=my.data[:]
 	global varlist,btnlist,labelist
 	varlist,btnlist,labelist=datas()
 	datashow()
 
 def dataedit():
-	pass
-
-def datadel():
-	global varlist,btnlist,labelist
-	global my
-	rlist=varlist[:]
-	rlist.reverse()
-	for var in rlist:
+	global varlist
+	showbox.delete(1.0,END)
+	showbox.insert(END,'Please enter new data in the following format:\n')
+	showbox.insert(END,"Enter \'TAB\' to devide each column\n")
+	showbox.insert(END,'uid:\tname:\tsex:\theight(cm):\t')
+	showbox.insert(END,'\n')
+	for var in varlist:
 		if var.get()==1:
-			showbox.delete(labelist[varlist.index(var)])
-			my.data.pop(varlist.index(var))
-			showlist.pop(varlist.index(var))
-			showbox.delete(btnlist[varlist.index(var)])
-	varlist,btnlist,labelist=datas()
-	datashow()
+			Stu=showlist[varlist.index(var)]
+			showbox.insert(END,"%d\t%s\t%s\t%d\n"%(Stu.uid,Stu.name,Stu.sex,Stu.height))
+	editbutton.config(text="确认",command=editdataconfirm)
+	showbutton.config(state=DISABLED)
+	deletebutton.config(state=DISABLED)
+	searchbtn.config(state=DISABLED)
+	createbutton.config(state=DISABLED)
+
+def editdataconfirm():
+	global my
+	global showlist
+	global varlist,btnlist,labelist
+	raw=showbox.get(4.0,END)
+	rawdata=raw.split('\n')
+	rawdata.pop()
+	uids=[]
+	for var in varlist:
+		if var.get()==1:
+			tmpdata=rawdata.pop(0).split('\t')
+			#Judge whether uid already existed
+			if not tmpdata[0] in uids:
+				uids.append(tmpdata[0])
+			else:
+				messagebox.showerror("Error","Uid already existed!")
+				#reset
+				showbox.delete(4.0,END)
+				for var in varlist:
+					if var.get()==1:
+						Stu=showlist[varlist.index(var)]
+						showbox.insert(END,"%d\t%s\t%s\t%d\n"%(Stu.uid,Stu.name,Stu.sex,Stu.height))
+				break
+			#Judge the situation of edit
+			if type(my.edit(tmpdata[0],tmpdata[1],tmpdata[2],tmpdata[3]))==str:
+				messagebox.showerror("Error",my.edit(tmpdata[0],tmpdata[1],tmpdata[2],tmpdata[3]))
+				#reset
+				showbox.delete(4.0,END)
+				for var in varlist:
+					if var.get()==1:
+						Stu=showlist[varlist.index(var)]
+						showbox.insert(END,"%d\t%s\t%s\t%d\n"%(Stu.uid,Stu.name,Stu.sex,Stu.height))
+				break
+	else:
+		showbox.delete(1.0,3.0)
+		editbutton.config(text="修改",command=dataedit)
+		showbutton.config(state=NORMAL)
+		deletebutton.config(state=NORMAL)
+		searchbtn.config(state=NORMAL)
+		createbutton.config(state=NORMAL)
+		showlist=my.data[:]
+		varlist,btnlist,labelist=datas()
+		messagebox.showinfo("Successed","Your new data is updated!")
+		datashow()
 
 def newdataconfirm():
 	global my
@@ -84,7 +124,7 @@ def newdataconfirm():
 	rawdata.pop()
 	for newdata in rawdata:
 		tmpdata=newdata.split('\t')
-		if my.add(tmpdata[0],tmpdata[1],tmpdata[2],tmpdata[3])!="Successed.":
+		if my.add(int(tmpdata[0]),tmpdata[1],tmpdata[2],int(tmpdata[3]))!="Successed.":
 			messagebox.showerror("Error",my.add(tmpdata[0],tmpdata[1],tmpdata[2],tmpdata[3]))
 			showbox.delete(4.0,END)
 			break
@@ -105,14 +145,11 @@ def datanew():
 	showbox.delete(1.0,END)
 	showbox.insert(END,'Please enter new data in the following format:\n')
 	showbox.insert(END,"Enter \'TAB\' to devide each column\n")
-	#confirmbutton=Button(root,text="确认",command=newdataconfirm)
 	showbox.insert(END,'uid:\tname:\tsex:\theight(cm):\t')
-	#showbox.window_create(END,window=confirmbutton)
 	showbox.insert(END,'\n')
 	createbutton.config(text="确认",command=newdataconfirm)
 	showbutton.config(state=DISABLED)
 	deletebutton.config(state=DISABLED)
-	#createbutton.config(state=DISABLED)
 	searchbtn.config(state=DISABLED)
 	editbutton.config(state=DISABLED)
 
@@ -135,6 +172,18 @@ def datasearch():
 			messagebox.showerror("Error",my.condition_search(keys[0],keys[1],keys[2]))
 			return
 
+def datadel():
+	global varlist,btnlist,labelist
+	global my
+	rlist=varlist[:]
+	rlist.reverse()
+	for var in rlist:
+		if var.get()==1:
+			showbox.delete(labelist[varlist.index(var)])
+			my.data.remove(showlist.pop(varlist.index(var)))
+			showbox.delete(btnlist[varlist.index(var)])
+	varlist,btnlist,labelist=datas()
+	datashow()
 
 
 root=Tk()
@@ -171,14 +220,4 @@ showbox.grid(row=1,column=0,rowspan=17,columnspan=15,sticky=E)
 #showbox.pack(anchor=N,fill=BOTH)
 showbox.insert(END,'uid:\tname:\tsex:\theight(cm):\n')
 
-
-
 mainloop()
-
-#edit example
-'''for afteredit in my.edit("mike","boy",165,(5)):
-	afteredit.show()'''
-#search example
-'''for answer in my.condition_search("height","180","100","boy"):
-	answer.show()
-my.accurate_search(0,"1")'''
