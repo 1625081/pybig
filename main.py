@@ -1,4 +1,5 @@
 from Database import *
+import csv
 
 data=[]
 a=Student(1,"jack","boy",180)
@@ -12,6 +13,7 @@ my.add(5,"mary","girl",160)
 
 from tkinter import *
 from tkinter import messagebox
+from tkinter import filedialog
 def callback():
 	for var in varlist:
 		if var.get()==1:
@@ -31,7 +33,7 @@ def datas():
 		locals()[tmpvar]=IntVar()
 		locals()[tmpvar].set(0)
 		content=str(Stu.name)+"\t"+str(Stu.sex)+"\t"+str(Stu.height)+"\t"
-		exec("button"+str(Stu.uid)+"=Checkbutton(root,text=str(Stu.uid),onvalue=1,variable="+tmpvar+",offvalue=0,bg='White',command=callback,width=2,height=2)")
+		exec("button"+str(Stu.uid)+"=Checkbutton(root,text=str(Stu.uid),onvalue=1,variable="+tmpvar+",offvalue=0,bg='White',command=callback,height=2,width=8,anchor=W)")
 		locals()["label"+str(Stu.uid)]=Label(root,text=content,padx=15,pady=10,bg="White",relief=FLAT)
 		varlist.append(locals()[tmpvar])
 		btnlist.append(locals()["button"+str(Stu.uid)])
@@ -58,17 +60,15 @@ def dataedit():
 	showbox.delete(1.0,END)
 	showbox.insert(END,'Please enter new data in the following format:\n')
 	showbox.insert(END,"Enter \'TAB\' to devide each column\n")
-	showbox.insert(END,'uid:\tname:\tsex:\theight(cm):\t')
-	showbox.insert(END,'\n')
+	showbox.insert(END,'uid:\tname:\tsex:\theight(cm):\n')
 	for var in varlist:
 		if var.get()==1:
 			Stu=showlist[varlist.index(var)]
-			showbox.insert(END,"%d\t%s\t%s\t%d\n"%(Stu.uid,Stu.name,Stu.sex,Stu.height))
+			showbox.insert(END,"%d\t%s\t%s\t%d\n"%(int(Stu.uid),Stu.name,Stu.sex,int(Stu.height)))
 	editbutton.config(text="确认",command=editdataconfirm)
-	showbutton.config(state=DISABLED)
-	deletebutton.config(state=DISABLED)
-	searchbtn.config(state=DISABLED)
-	createbutton.config(state=DISABLED)
+	for btn in generalbuttons:
+		if btn!=editbutton:
+			btn.config(state=DISABLED)
 
 def editdataconfirm():
 	global my
@@ -76,11 +76,14 @@ def editdataconfirm():
 	global varlist,btnlist,labelist
 	raw=showbox.get(4.0,END)
 	rawdata=raw.split('\n')
+	print(rawdata)
 	rawdata.pop()
 	uids=[]
 	for var in varlist:
 		if var.get()==1:
+			print(rawdata)
 			tmpdata=rawdata.pop(0).split('\t')
+			print(tmpdata)
 			#Judge whether uid already existed
 			if not tmpdata[0] in uids:
 				uids.append(tmpdata[0])
@@ -91,7 +94,7 @@ def editdataconfirm():
 				for var in varlist:
 					if var.get()==1:
 						Stu=showlist[varlist.index(var)]
-						showbox.insert(END,"%d\t%s\t%s\t%d\n"%(Stu.uid,Stu.name,Stu.sex,Stu.height))
+						showbox.insert(END,"%d\t%s\t%s\t%d\n"%(int(Stu.uid),Stu.name,Stu.sex,int(Stu.height)))
 				break
 			#Judge the situation of edit
 			if type(my.edit(tmpdata[0],tmpdata[1],tmpdata[2],tmpdata[3]))==str:
@@ -101,15 +104,15 @@ def editdataconfirm():
 				for var in varlist:
 					if var.get()==1:
 						Stu=showlist[varlist.index(var)]
-						showbox.insert(END,"%d\t%s\t%s\t%d\n"%(Stu.uid,Stu.name,Stu.sex,Stu.height))
+						showbox.insert(END,"%d\t%s\t%s\t%d\n"%(int(Stu.uid),Stu.name,Stu.sex,int(Stu.height)))
 				break
 	else:
-		showbox.delete(1.0,3.0)
+		showbox.delete(1.0,END)
+		showbox.insert(END,'uid:\t'+'      '+'name:\t\tsex:\theight(cm):\n')
 		editbutton.config(text="修改",command=dataedit)
-		showbutton.config(state=NORMAL)
-		deletebutton.config(state=NORMAL)
-		searchbtn.config(state=NORMAL)
-		createbutton.config(state=NORMAL)
+		for btn in generalbuttons:
+			if btn!=editbutton:
+				btn.config(state=NORMAL)
 		showlist=my.data[:]
 		varlist,btnlist,labelist=datas()
 		messagebox.showinfo("Successed","Your new data is updated!")
@@ -120,21 +123,26 @@ def newdataconfirm():
 	global showlist
 	global varlist,btnlist,labelist
 	raw=showbox.get(4.0,END)
+	print(raw)
 	rawdata=raw.split('\n')
+	print(rawdata)
 	rawdata.pop()
+	print(rawdata)
 	for newdata in rawdata:
+		if newdata=="":continue
 		tmpdata=newdata.split('\t')
+		print(tmpdata)
 		if my.add(int(tmpdata[0]),tmpdata[1],tmpdata[2],int(tmpdata[3]))!="Successed.":
 			messagebox.showerror("Error",my.add(tmpdata[0],tmpdata[1],tmpdata[2],tmpdata[3]))
 			showbox.delete(4.0,END)
 			break
 	else:
-		showbox.delete(1.0,3.0)
+		showbox.delete(1.0,END)
+		showbox.insert(END,'uid:\t'+'      '+'name:\t\tsex:\theight(cm):\n')
 		createbutton.config(text="新增",command=datanew)
-		showbutton.config(state=NORMAL)
-		deletebutton.config(state=NORMAL)
-		searchbtn.config(state=NORMAL)
-		editbutton.config(state=NORMAL)
+		for btn in generalbuttons:
+			if btn!=createbutton:
+				btn.config(state=NORMAL)
 		messagebox.showinfo("Successed","Your new data is updated!")
 		showlist=my.data[:]
 		varlist,btnlist,labelist=datas()
@@ -145,13 +153,11 @@ def datanew():
 	showbox.delete(1.0,END)
 	showbox.insert(END,'Please enter new data in the following format:\n')
 	showbox.insert(END,"Enter \'TAB\' to devide each column\n")
-	showbox.insert(END,'uid:\tname:\tsex:\theight(cm):\t')
-	showbox.insert(END,'\n')
+	showbox.insert(END,'uid:\tname:\tsex:\theight(cm):\n')
 	createbutton.config(text="确认",command=newdataconfirm)
-	showbutton.config(state=DISABLED)
-	deletebutton.config(state=DISABLED)
-	searchbtn.config(state=DISABLED)
-	editbutton.config(state=DISABLED)
+	for btn in generalbuttons:
+		if btn!=createbutton:
+			btn.config(state=DISABLED)
 
 def datasearch():
 	key=searchbox.get(1.0,END)
@@ -185,6 +191,44 @@ def datadel():
 	varlist,btnlist,labelist=datas()
 	datashow()
 
+def dataopen():
+	global my
+	global showlist,btnlist,varlist,labelist
+	qsave=my.data[:]
+	my.data=[]
+	name=filedialog.askopenfilename()
+	if name !="":
+		with open(name,'r+') as f:
+			reader=csv.reader(f)
+			for row in reader:
+				if len(row)!=4:
+					messagebox.showerror("Error","Please Check Your FILE format!")
+					my.data=qsave[:]
+					break
+				if my.add(row[0],row[1],row[2],row[3])!="Successed.":
+					messagebox.showerror("Error",my.add(row[0],row[1],row[2],row[3]))
+					my.data=qsave[:]
+					break
+			else:
+				messagebox.showinfo("Successed.","Your file have been read successfully.")
+				showlist=my.data[:]
+				varlist,btnlist,labelist=datas()
+				datashow()
+	else:messagebox.showinfo("Attention","File can't be NULL.")
+
+def datasave():
+	global my
+	name=filedialog.asksaveasfilename()
+	with open(name, 'w+') as csvfile:
+		try:
+			spamwriter = csv.writer(csvfile,dialect='excel')
+			for Stu in my.data:
+				tmplist=[Stu.uid,Stu.name,Stu.sex,Stu.height]
+				spamwriter.writerow(tmplist)
+		except:
+			messagebox.showerror("Error","Unknown Error!")
+		else:
+			messagebox.showinfo("Successed.","File saved as CSV successfully.")
 
 root=Tk()
 root.title="My Database"
@@ -200,9 +244,15 @@ showbutton=Button(root,text="全部",command=dataall)
 editbutton=Button(root,text="修改",command=dataedit)
 deletebutton=Button(root,text="删除",command=datadel)
 createbutton=Button(root,text="新增",command=datanew)
+openbutton=Button(root,text="打开",command=dataopen)
+savebutton=Button(root,text="保存",command=datasave)
 searchlabel=Label(root,text="Search:")
 searchbox=Text(root,height=1,width=10)
 searchbtn=Button(root,text="Go!",command=datasearch)
+generalbuttons=[showbutton,editbutton,deletebutton,createbutton,openbutton,savebutton,searchbtn]
+
+#buttonbig=Button(root,text="hahahahahahahaha")
+#showbox.window_create(INSERT,window=buttonbig)
 
 chooselist=[]
 
@@ -211,6 +261,8 @@ showbutton.grid(row=0,column=16,sticky=NE,padx=6,pady=9)
 createbutton.grid(row=1,column=16,sticky=NE,padx=6,pady=6)
 editbutton.grid(row=2,column=16,sticky=NE,padx=6,pady=6)
 deletebutton.grid(row=3,column=16,sticky=NE,padx=6,pady=6)
+openbutton.grid(row=4,column=16,sticky=NE,padx=6,pady=6)
+savebutton.grid(row=5,column=16,sticky=NE,padx=6,pady=6)
 
 searchlabel.grid(row=0,column=0,sticky=W)
 searchbox.grid(row=0,column=1,sticky=W)
@@ -218,6 +270,6 @@ searchbtn.grid(row=0,column=2,sticky=W)
 showbox.grid(row=1,column=0,rowspan=17,columnspan=15,sticky=E)
 #createbutton.pack(anchor=NE,pady=0)
 #showbox.pack(anchor=N,fill=BOTH)
-showbox.insert(END,'uid:\tname:\tsex:\theight(cm):\n')
+showbox.insert(END,'uid:\t'+'      '+'name:\t\tsex:\theight(cm):\n')
 
 mainloop()
