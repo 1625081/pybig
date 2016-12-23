@@ -1,17 +1,19 @@
 from Database import *
-import csv
-
+data=[]
 a=Student(1,"jack","boy",180)
 b=Student(2,"jac","boy",184)
 c=Student(3,"ja","boy",170)
 d=Student(4,"j","boy",155)
-e=Student(5,"mary","girl",160)
-data=[a,b,c,d,e]
+data=[a,b,c,d]
 my=Database(data)
+my.add(5,"mary","girl",160)
 
 from tkinter import *
 from tkinter import messagebox
 from tkinter import filedialog
+root=Tk()
+root.title="My Database"
+
 def callback():
 	for var in varlist:
 		if var.get()==1:
@@ -39,6 +41,8 @@ def datas():
 	return varlist,btnlist,labelist
 
 def datashow():
+	#showbox.delete(2.0,END)
+	#varlist,btnlist,labelist=datas()
 	for var in varlist:
 		showbox.window_create(END,window=btnlist[varlist.index(var)])
 		showbox.window_create(END,window=labelist[varlist.index(var)])
@@ -75,7 +79,6 @@ def editdataconfirm():
 	print(rawdata)
 	rawdata.pop()
 	uids=[]
-	qsave=my.data[:]
 	for var in varlist:
 		if var.get()==1:
 			print(rawdata)
@@ -104,7 +107,6 @@ def editdataconfirm():
 						showbox.insert(END,"%d\t%s\t%s\t%d\n"%(int(Stu.uid),Stu.name,Stu.sex,int(Stu.height)))
 				break
 	else:
-		my.former=qsave[:]
 		showbox.delete(1.0,END)
 		showbox.insert(END,'uid:\t'+'      '+'name:\t\tsex:\theight(cm):\n')
 		editbutton.config(text="修改",command=dataedit)
@@ -181,13 +183,11 @@ def datadel():
 	global my
 	rlist=varlist[:]
 	rlist.reverse()
-	deletelist=[]
 	for var in rlist:
 		if var.get()==1:
 			showbox.delete(labelist[varlist.index(var)])
-			deletelist.append(showlist.pop(varlist.index(var)))
+			my.data.remove(showlist.pop(varlist.index(var)))
 			showbox.delete(btnlist[varlist.index(var)])
-	my.delete(deletelist)
 	varlist,btnlist,labelist=datas()
 	datashow()
 
@@ -229,52 +229,9 @@ def datasave():
 			messagebox.showerror("Error","Unknown Error!")
 		else:
 			messagebox.showinfo("Successed.","File saved as CSV successfully.")
-
-def datarollback():
-	global my,showlist,varlist,btnlist,labelist
-	my.data=my.former[:]
-	showlist=my.data[:]
-	varlist,btnlist,labelist=datas()
-	datashow()
-
-root=Tk()
-root.title="My Database"
 showlist=my.data[:]
 root.geometry('400x400')
 showbox=Text(root,width=47)
-ybar=Scrollbar(root,orient=VERTICAL)
-ybar.config(command=showbox.yview)
-showbox.config(yscrollcommand=ybar.set)
+
 #button label全局化
-
 varlist,btnlist,labelist=datas()
-
-showbutton=Button(root,text="全部",command=dataall)
-editbutton=Button(root,text="修改",command=dataedit)
-deletebutton=Button(root,text="删除",command=datadel)
-createbutton=Button(root,text="新增",command=datanew)
-openbutton=Button(root,text="打开",command=dataopen)
-savebutton=Button(root,text="保存",command=datasave)
-rollbutton=Button(root,text="回卷",command=datarollback)
-searchlabel=Label(root,text="Search:")
-searchbox=Text(root,height=1,width=10)
-searchbtn=Button(root,text="Go!",command=datasearch)
-generalbuttons=[showbutton,editbutton,deletebutton,createbutton,openbutton,savebutton,searchbtn,rollbutton]
-
-#showbox.grid(row=0,column=0,rowspan=3,columnspan=5,sticky=W,)
-showbutton.grid(row=0,column=16,sticky=NE,padx=6,pady=9)
-createbutton.grid(row=1,column=16,sticky=NE,padx=6,pady=6)
-editbutton.grid(row=2,column=16,sticky=NE,padx=6,pady=6)
-deletebutton.grid(row=3,column=16,sticky=NE,padx=6,pady=6)
-openbutton.grid(row=4,column=16,sticky=NE,padx=6,pady=6)
-savebutton.grid(row=5,column=16,sticky=NE,padx=6,pady=6)
-rollbutton.grid(row=6,column=16,sticky=NE,padx=6,pady=6)
-
-searchlabel.grid(row=0,column=0,sticky=W)
-searchbox.grid(row=0,column=1,sticky=W)
-searchbtn.grid(row=0,column=2,sticky=W)
-showbox.grid(row=1,column=0,rowspan=17,columnspan=14,sticky=E)
-ybar.grid(row=1,column=15,rowspan=17,sticky=NS)
-showbox.insert(END,'uid:\t'+'      '+'name:\t\tsex:\theight(cm):\n')
-
-mainloop()

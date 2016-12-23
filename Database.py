@@ -3,7 +3,7 @@ class Database:
 	def __init__(self,data):
 		self.data=data
 		self.index=len(data)
-
+		self.former=data
 	def add(self,uid,name,sex,height):
 		for Stu in self.data:
 			if uid==Stu.uid:return "Uid already exists!"
@@ -13,6 +13,7 @@ class Database:
 		if newStu.validate()!="Data is alright.":
 			return newStu.validate()
 		else:
+			self.former=self.data[:]
 			self.data.append(newStu)
 			return "Successed."
 			#self.save()'''
@@ -79,6 +80,7 @@ class Database:
 				continue
 			else:
 				datatmp.append(Stu)
+		self.former=self.data[:]
 		self.data=datatmp[:]
 		#for Stu in self.data:
 		#	Stu.show()
