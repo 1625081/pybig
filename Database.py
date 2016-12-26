@@ -4,9 +4,12 @@ class Database:
 		self.data=data
 		self.index=len(data)
 		self.former=data
+		self.btnlist=[]
+		self.labelist=[]
+		self.varlist=[]
 	def add(self,uid,name,sex,height):
 		for Stu in self.data:
-			if uid==Stu.uid:return "Uid already exists!"
+			if str(uid)==str(Stu.uid):return "Uid already exists!"
 		
 		#validations
 		newStu=Student(uid,name,sex,height)
@@ -35,9 +38,11 @@ class Database:
 
 	def search(self,keyword):
 		result=[]
+		dicts=["uid","name","sex","height"]
 		for Stu in self.data: #keyword must be a string as no "int" before "input()"
-			if str(Stu.uid)==keyword or str(Stu.name)==keyword or str(Stu.sex)==keyword or str(Stu.height)==keyword:
-					result.append(Stu)
+			for key in dicts:
+				if eval("len(str(Stu."+key+").split(keyword))>=2"):
+						if not Stu in result:result.append(Stu)
 		#if len(result)==1:return result[0]
 		return result #maybe返回空列表
 
@@ -52,13 +57,13 @@ class Database:
 		if category=="uid":
 			for Stu in self.data:
 				try:
-					if Stu.uid <= int(upper) and Stu.uid >= int(lower):
+					if int(Stu.uid) <= int(upper) and int(Stu.uid) >= int(lower):
 						result.append(Stu)
 				except:return "Search Error!Please Check your inputs!"
 		elif category=="height":
 			for Stu in self.data:
 				try:
-					if Stu.height <= int(upper) and Stu.height >= int(lower):
+					if int(Stu.height) <= int(upper) and int(Stu.height) >= int(lower):
 						result.append(Stu)
 				except:return "Search Error!Please Check your inputs!"
 		else: return "Search Error!Please Check your inputs!"
@@ -74,16 +79,9 @@ class Database:
 		else: print("No Found.")
 
 	def delete(self,deletelist):
-		datatmp=[]
-		for Stu in self.data:
-			if Stu.uid in deletelist:
-				continue
-			else:
-				datatmp.append(Stu)
 		self.former=self.data[:]
-		self.data=datatmp[:]
-		#for Stu in self.data:
-		#	Stu.show()
+		for Stu in deletelist:
+			self.data.remove(Stu)
 
 	def open(self):	
 		pass
