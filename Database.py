@@ -22,15 +22,15 @@ class Database:
 			#self.save()'''
 
 	def edit(self,uid,name,sex,height):#here we confirm that uid can't be changed
-		try:
-			Stu=self.search(str(uid))[0]
-			newStu=self.search(str(uid))[0].edit(name,sex,height)
+		#try:
+			Stu=self.accurate_search("uid",str(uid))
+			newStu=self.accurate_search("uid",str(uid)).edit(name,sex,height)
 			if type(newStu)==str:
 				return newStu
 			else:
 				self.data[self.data.index(Stu)]=newStu
 				return newStu #return a list of result
-		except:return "Unknown Error!"
+		#except:return "Unknown Error!"
 
 	def search(self,keyword):
 		result=[]
@@ -42,6 +42,10 @@ class Database:
 		#if len(result)==1:return result[0]
 		return result #maybe返回空列表
 
+	def accurate_search(self,mode,keyword):
+		for Stu in self.data:
+			if eval("str(Stu."+mode+")==keyword"):
+				return Stu 
 
 	def condition_search(self,*conditions):
 		category=conditions[0]

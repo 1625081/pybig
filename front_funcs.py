@@ -54,7 +54,6 @@ def dataedit():
 def editdataconfirm():
 	global my
 	global showlist
-	#global varlist,btnlist,labelist
 	raw=showbox.get(4.0,END)
 	rawdata=raw.split('\\n')
 	print(rawdata)
@@ -63,9 +62,7 @@ def editdataconfirm():
 	qsave=my.data[:]
 	for var in my.varlist:
 		if var.get()==1:
-			print(rawdata)
 			tmpdata=rawdata.pop(0).split('\\t')
-			print(tmpdata)
 			#Judge whether uid already existed
 			if not tmpdata[0] in uids:
 				uids.append(tmpdata[0])
@@ -147,7 +144,13 @@ def datasearch():
 	k=key.split('\\n')
 	global showlist
 	#global varlist,btnlist,labelist	
-	if len(k[0].split(":"))==1:
+	if len(k[0].split("!"))!=1:
+		showlist=[]
+		keys=k[0].split("!")
+		showlist.append(my.accurate_search(keys[0],keys[1]))
+		my.varlist,my.btnlist,my.labelist=datas()
+		datashow()
+	elif len(k[0].split(":"))==1:
 		showlist=my.search(k[0])[:]
 		my.varlist,my.btnlist,my.labelist=datas()
 		datashow()

@@ -22,7 +22,7 @@ def helpme(event):
 	helpwindow.geometry('300x300')
 	helptext=Text(helpwindow,width=200)
 	helptext.pack()
-	helptext.insert(END,"【搜索相关事项】\n目前直接搜索展现出的结果是模糊搜索的结果，条件搜索方法如下：\n要搜索的项目名:上界:下界\n可选择的项目名只有uid和height\n[例子]uid:10:1\n则1<=uid<=10的数据会被输出\n更多说明请访问\nhttps://github.com/1625081/pybig")
+	helptext.insert(END,"【搜索相关事项】\n目前直接搜索展现出的结果是模糊搜索的结果，条件搜索和精确搜索方法如下：\n【条件搜索】要搜索的项目名:上界:下界\n可选择的项目名只有uid和height\n[例子]uid:10:1\n则1<=uid<=10的数据会被输出\n【精确搜索】搜索项+!+具体值\n[例子]uid!1\n则uid为1的用户会被输出\n更多说明请访问\nhttps://github.com/1625081/pybig")
 root=Tk()
 root.title="My Database"
 showlist=my.data[:]
