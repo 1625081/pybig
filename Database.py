@@ -2,8 +2,8 @@ from stu import *
 class Database:
 	def __init__(self,data):
 		self.data=data
-		self.index=len(data)
-		self.former=data
+		self.former=[]
+		self.former.append(self.data[:])
 		self.btnlist=[]
 		self.labelist=[]
 		self.varlist=[]
@@ -16,14 +16,10 @@ class Database:
 		if newStu.validate()!="Data is alright.":
 			return newStu.validate()
 		else:
-			self.former=self.data[:]
+			self.former.append(self.data[:])
 			self.data.append(newStu)
 			return "Successed."
 			#self.save()'''
-
-	def show(self):
-		for Stu in self.data:
-			Stu.show()
 
 	def edit(self,uid,name,sex,height):#here we confirm that uid can't be changed
 		try:
@@ -51,9 +47,7 @@ class Database:
 		category=conditions[0]
 		upper=conditions[1]
 		lower=conditions[2]
-		#keyword=conditions[3]
 		result=[]
-		#if category=="sex" or category=="name":return self.search(keyword)
 		if category=="uid":
 			for Stu in self.data:
 				try:
@@ -69,21 +63,12 @@ class Database:
 		else: return "Search Error!Please Check your inputs!"
 		return result
 
-	def accurate_search(self,mode,keyword):
-		#accurate search return only one result,so it's not recommended to search for sex or height 
-		#eval()is a great way to run raw code
-		dicts={0:"uid",1:"name",2:"sex",3:"height"}
-		for Stu in self.data:
-			if eval("str(Stu."+eval("dicts[mode]")+")==keyword"):
-				return Stu
-		else: print("No Found.")
-
 	def delete(self,deletelist):
-		self.former=self.data[:]
+		self.former.append(self.data[:])
 		for Stu in deletelist:
 			self.data.remove(Stu)
+	def rollback(self):
+		if len(self.former)>1: 
+			tmp=self.former.pop()
+			self.data=tmp[:]
 
-	def open(self):	
-		pass
-	def save(self):
-		pass

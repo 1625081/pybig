@@ -89,7 +89,7 @@ def editdataconfirm():
 						showbox.insert(END,"%d\\t%s\\t%s\\t%d\\n"%(int(Stu.uid),Stu.name,Stu.sex,int(Stu.height)))
 				break
 	else:
-		my.former=qsave[:]
+		my.former.append(qsave[:])
 		showbox.delete(1.0,END)
 		showbox.insert(END,'uid:\\t'+'      '+'name:\\t\\tsex:\\theight(cm):\\n')
 		editbutton.config(text="修改",command=dataedit)
@@ -217,8 +217,8 @@ def datasave():
 			messagebox.showinfo("Successed.","File saved as CSV successfully.")
 
 def datarollback():
-	global my,showlist#,varlist,btnlist,labelist
-	my.data=my.former[:]
+	global my,showlist
+	my.rollback()
 	showlist=my.data[:]
 	my.varlist,my.btnlist,my.labelist=datas()
 	datashow()
