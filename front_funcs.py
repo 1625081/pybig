@@ -56,18 +56,16 @@ def editdataconfirm():
 	global showlist
 	raw=showbox.get(4.0,END)
 	rawdata=raw.split('\\n')
-	print(rawdata)
+	#print(rawdata)
 	rawdata.pop()
 	uids=[]
 	qsave=my.data[:]
 	for var in my.varlist:
 		if var.get()==1:
 			tmpdata=rawdata.pop(0).split('\\t')
-			#Judge whether uid already existed
-			if not tmpdata[0] in uids:
-				uids.append(tmpdata[0])
-			else:
-				messagebox.showerror("Error","Uid already existed!")
+			formeruid=str(showlist[my.varlist.index(var)].uid)
+			if formeruid!=tmpdata[0]:
+				messagebox.showerror("Error","Uid must remain unchanged!")
 				#reset
 				showbox.delete(4.0,END)
 				for var in my.varlist:
@@ -75,6 +73,7 @@ def editdataconfirm():
 						Stu=showlist[my.varlist.index(var)]
 						showbox.insert(END,"%d\\t%s\\t%s\\t%d\\n"%(int(Stu.uid),Stu.name,Stu.sex,int(Stu.height)))
 				break
+
 			#Judge the situation of edit
 			if type(my.edit(tmpdata[0],tmpdata[1],tmpdata[2],tmpdata[3]))==str:
 				messagebox.showerror("Error",my.edit(tmpdata[0],tmpdata[1],tmpdata[2],tmpdata[3]))
@@ -103,16 +102,16 @@ def newdataconfirm():
 	global showlist
 	#global varlist,btnlist,labelist
 	raw=showbox.get(4.0,END)
-	print(raw)
+	#print(raw)
 	rawdata=raw.split('\\n')
-	print(rawdata)
+	#print(rawdata)
 	rawdata.pop()
-	print(rawdata)
+	#print(rawdata)
 	for newdata in rawdata:
 		if newdata=="":continue
 		tmpdata=newdata.split('\\t')
-		print(tmpdata)
-		if my.add(int(tmpdata[0]),tmpdata[1],tmpdata[2],int(tmpdata[3]))!="Successed.":
+		#print(tmpdata)
+		if my.add(tmpdata[0],tmpdata[1],tmpdata[2],tmpdata[3])!="Successed.":
 			messagebox.showerror("Error",my.add(tmpdata[0],tmpdata[1],tmpdata[2],tmpdata[3]))
 			showbox.delete(4.0,END)
 			break
